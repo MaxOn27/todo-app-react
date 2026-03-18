@@ -43,7 +43,7 @@ export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
         boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
         cursor: 'grabbing'
       }}
-      className="group flex cursor-grab select-none items-center gap-3 rounded-lg border border-border bg-card p-3 transition-colors hover:bg-muted/50 active:cursor-grabbing"
+      className="group flex cursor-grab touch-none select-none items-center gap-3 rounded-lg border border-border bg-card p-3 transition-colors hover:bg-muted/50 active:cursor-grabbing"
     >
       <div className="text-muted-foreground opacity-50">
         <GripVerticalIcon className="size-5 sm:size-4" />
