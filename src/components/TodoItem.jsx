@@ -46,9 +46,9 @@ export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
     >
       <div
         onPointerDown={(e) => dragControls.start(e)}
-        className="cursor-grab touch-none text-muted-foreground opacity-50 transition-opacity hover:opacity-100 active:cursor-grabbing"
+        className="-m-1 cursor-grab p-1 text-muted-foreground opacity-50 transition-opacity hover:opacity-100 active:cursor-grabbing"
       >
-        <GripVerticalIcon className="size-4" />
+        <GripVerticalIcon className="size-5 sm:size-4" />
       </div>
 
       <Checkbox
@@ -85,7 +85,7 @@ export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
           >
             {todo.text}
           </span>
-          <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="flex items-center gap-1 opacity-100 sm:opacity-0 transition-opacity sm:group-hover:opacity-100">
             <Button
               variant="ghost"
               size="icon-sm"
