@@ -41,7 +41,8 @@ export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
     if (e.pointerType === 'touch') {
       longPressTimer.current = setTimeout(() => {
         setIsDragReady(true)
-        dragControls.start(e)
+        // Don't call dragControls.start() here - event is stale after 300ms
+        // Wait for fresh pointerMove event instead
       }, LONG_PRESS_DELAY)
     } else {
       dragControls.start(e)
@@ -57,10 +58,13 @@ export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
   }
 
   const handlePointerMove = (e) => {
-    // Cancel long press if finger moves (user is scrolling)
     if (longPressTimer.current && e.pointerType === 'touch') {
+      // Finger moved BEFORE long press completed - user is scrolling
       clearTimeout(longPressTimer.current)
       longPressTimer.current = null
+    } else if (isDragReady && e.pointerType === 'touch') {
+      // Long press completed, start drag with this FRESH event
+      dragControls.start(e)
     }
   }
 
