@@ -37,28 +37,27 @@ export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
       value={todo}
       dragListener={false}
       dragControls={dragControls}
+      onPointerDown={(e) => dragControls.start(e)}
       whileDrag={{
         scale: 1.02,
         boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
         cursor: 'grabbing'
       }}
-      className="group flex items-center gap-3 rounded-lg border border-border bg-card p-3 transition-colors hover:bg-muted/50"
+      className="group flex cursor-grab select-none items-center gap-3 rounded-lg border border-border bg-card p-3 transition-colors hover:bg-muted/50 active:cursor-grabbing"
     >
-      <div
-        onPointerDown={(e) => dragControls.start(e)}
-        className="-m-1 cursor-grab p-1 text-muted-foreground opacity-50 transition-opacity hover:opacity-100 active:cursor-grabbing"
-      >
+      <div className="text-muted-foreground opacity-50">
         <GripVerticalIcon className="size-5 sm:size-4" />
       </div>
 
       <Checkbox
         checked={todo.completed}
         onCheckedChange={() => onToggle(todo.id)}
+        onPointerDown={(e) => e.stopPropagation()}
         className="shrink-0"
       />
 
       {isEditing ? (
-        <div className="flex flex-1 items-center gap-2">
+        <div className="flex flex-1 items-center gap-2" onPointerDown={(e) => e.stopPropagation()}>
           <Input
             type="text"
             value={editText}
@@ -85,7 +84,7 @@ export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
           >
             {todo.text}
           </span>
-          <div className="flex items-center gap-1 opacity-100 sm:opacity-0 transition-opacity sm:group-hover:opacity-100">
+          <div className="flex items-center gap-1 opacity-100 sm:opacity-0 transition-opacity sm:group-hover:opacity-100" onPointerDown={(e) => e.stopPropagation()}>
             <Button
               variant="ghost"
               size="icon-sm"
