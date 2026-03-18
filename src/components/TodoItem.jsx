@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Reorder, useDragControls } from 'framer-motion'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
@@ -7,10 +7,14 @@ import { DeleteDialog } from './DeleteDialog'
 import { PencilIcon, CheckIcon, XIcon, GripVerticalIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+const LONG_PRESS_DELAY = 300
+
 export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
   const [isEditing, setIsEditing] = useState(false)
   const [editText, setEditText] = useState(todo.text)
+  const [isDragReady, setIsDragReady] = useState(false)
   const dragControls = useDragControls()
+  const longPressTimer = useRef(null)
 
   const handleSave = () => {
     if (editText.trim()) {
@@ -32,18 +36,52 @@ export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
     }
   }
 
+  const handlePointerDown = (e) => {
+    // Only apply delay for touch - mouse can drag immediately
+    if (e.pointerType === 'touch') {
+      longPressTimer.current = setTimeout(() => {
+        setIsDragReady(true)
+        dragControls.start(e)
+      }, LONG_PRESS_DELAY)
+    } else {
+      dragControls.start(e)
+    }
+  }
+
+  const handlePointerUp = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current)
+      longPressTimer.current = null
+    }
+    setIsDragReady(false)
+  }
+
+  const handlePointerMove = (e) => {
+    // Cancel long press if finger moves (user is scrolling)
+    if (longPressTimer.current && e.pointerType === 'touch') {
+      clearTimeout(longPressTimer.current)
+      longPressTimer.current = null
+    }
+  }
+
   return (
     <Reorder.Item
       value={todo}
       dragListener={false}
       dragControls={dragControls}
-      onPointerDown={(e) => dragControls.start(e)}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+      onPointerMove={handlePointerMove}
       whileDrag={{
         scale: 1.02,
         boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
         cursor: 'grabbing'
       }}
-      className="group flex cursor-grab touch-none select-none items-center gap-3 rounded-lg border border-border bg-card p-3 transition-colors hover:bg-muted/50 active:cursor-grabbing"
+      className={cn(
+        "group flex cursor-grab select-none items-center gap-3 rounded-lg border border-border bg-card p-3 transition-colors hover:bg-muted/50 active:cursor-grabbing",
+        isDragReady && "touch-none"
+      )}
     >
       <div className="text-muted-foreground opacity-50">
         <GripVerticalIcon className="size-5 sm:size-4" />
