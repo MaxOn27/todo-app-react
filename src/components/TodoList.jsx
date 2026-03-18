@@ -1,8 +1,8 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { Reorder, motion } from 'framer-motion'
 import { TodoItem } from './TodoItem'
 import { ListTodoIcon } from 'lucide-react'
 
-export function TodoList({ todos, onUpdate, onDelete, onToggle }) {
+export function TodoList({ todos, onUpdate, onDelete, onToggle, onReorder }) {
   if (todos.length === 0) {
     return (
       <motion.div
@@ -17,28 +17,21 @@ export function TodoList({ todos, onUpdate, onDelete, onToggle }) {
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <AnimatePresence mode="popLayout">
-        {todos.map((todo, index) => (
-          <motion.div
-            key={todo.id}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              transition: { delay: index * 0.05 }
-            }}
-            exit={{ opacity: 0, x: -20 }}
-          >
-            <TodoItem
-              todo={todo}
-              onUpdate={onUpdate}
-              onDelete={onDelete}
-              onToggle={onToggle}
-            />
-          </motion.div>
-        ))}
-      </AnimatePresence>
-    </div>
+    <Reorder.Group
+      axis="y"
+      values={todos}
+      onReorder={onReorder}
+      className="flex flex-col gap-2"
+    >
+      {todos.map((todo) => (
+        <TodoItem
+          key={todo.id}
+          todo={todo}
+          onUpdate={onUpdate}
+          onDelete={onDelete}
+          onToggle={onToggle}
+        />
+      ))}
+    </Reorder.Group>
   )
 }

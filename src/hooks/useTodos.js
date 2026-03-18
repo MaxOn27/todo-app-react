@@ -46,11 +46,16 @@ export function useTodos() {
     )
   }
 
+  const reorderTodos = (newOrder) => {
+    setTodos(newOrder)
+  }
+
   return {
     todos,
     addTodo,
     updateTodo,
     deleteTodo,
-    toggleTodo
+    toggleTodo,
+    reorderTodos
   }
 }

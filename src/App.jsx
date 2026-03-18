@@ -7,7 +7,7 @@ import { useTodos } from '@/hooks/useTodos'
 import { SunIcon, MoonIcon, CheckSquareIcon } from 'lucide-react'
 
 function App() {
-  const { todos, addTodo, updateTodo, deleteTodo, toggleTodo } = useTodos()
+  const { todos, addTodo, updateTodo, deleteTodo, toggleTodo, reorderTodos } = useTodos()
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('theme')
@@ -59,6 +59,7 @@ function App() {
               onUpdate={updateTodo}
               onDelete={deleteTodo}
               onToggle={toggleTodo}
+              onReorder={reorderTodos}
             />
           </CardContent>
         </Card>

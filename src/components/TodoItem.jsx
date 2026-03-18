@@ -1,15 +1,16 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { Reorder, useDragControls } from 'framer-motion'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { DeleteDialog } from './DeleteDialog'
-import { PencilIcon, CheckIcon, XIcon } from 'lucide-react'
+import { PencilIcon, CheckIcon, XIcon, GripVerticalIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
   const [isEditing, setIsEditing] = useState(false)
   const [editText, setEditText] = useState(todo.text)
+  const dragControls = useDragControls()
 
   const handleSave = () => {
     if (editText.trim()) {
@@ -32,14 +33,24 @@ export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
   }
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.2 }}
+    <Reorder.Item
+      value={todo}
+      dragListener={false}
+      dragControls={dragControls}
+      whileDrag={{
+        scale: 1.02,
+        boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
+        cursor: 'grabbing'
+      }}
       className="group flex items-center gap-3 rounded-lg border border-border bg-card p-3 transition-colors hover:bg-muted/50"
     >
+      <div
+        onPointerDown={(e) => dragControls.start(e)}
+        className="cursor-grab touch-none text-muted-foreground opacity-50 transition-opacity hover:opacity-100 active:cursor-grabbing"
+      >
+        <GripVerticalIcon className="size-4" />
+      </div>
+
       <Checkbox
         checked={todo.completed}
         onCheckedChange={() => onToggle(todo.id)}
@@ -86,6 +97,6 @@ export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
           </div>
         </>
       )}
-    </motion.div>
+    </Reorder.Item>
   )
 }
