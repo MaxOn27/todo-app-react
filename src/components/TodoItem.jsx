@@ -15,6 +15,7 @@ export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
   const [isDragReady, setIsDragReady] = useState(false)
   const dragControls = useDragControls()
   const longPressTimer = useRef(null)
+  const dragStarted = useRef(false)
 
   const handleSave = () => {
     if (editText.trim()) {
@@ -55,6 +56,7 @@ export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
       longPressTimer.current = null
     }
     setIsDragReady(false)
+    dragStarted.current = false
   }
 
   const handlePointerMove = (e) => {
@@ -62,8 +64,9 @@ export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
       // Finger moved BEFORE long press completed - user is scrolling
       clearTimeout(longPressTimer.current)
       longPressTimer.current = null
-    } else if (isDragReady && e.pointerType === 'touch') {
-      // Long press completed, start drag with this FRESH event
+    } else if (isDragReady && e.pointerType === 'touch' && !dragStarted.current) {
+      // Long press completed, start drag with this FRESH event (only once!)
+      dragStarted.current = true
       dragControls.start(e)
     }
   }
