@@ -21,19 +21,27 @@ export function TodoForm({ onAdd }) {
     }
   }, [transcript])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (text.trim()) {
       onAdd(text)
       setText('')
       resetTranscript()
-      SpeechRecognition.stopListening()
+      try {
+        await SpeechRecognition.stopListening()
+      } catch (error) {
+        console.error('Failed to stop listening:', error)
+      }
     }
   }
 
   const toggleListening = async () => {
     if (listening) {
-      SpeechRecognition.stopListening()
+      try {
+        await SpeechRecognition.stopListening()
+      } catch (error) {
+        console.error('Failed to stop listening:', error)
+      }
     } else {
       resetTranscript()
       try {
