@@ -31,12 +31,16 @@ export function TodoForm({ onAdd }) {
     }
   }
 
-  const toggleListening = () => {
+  const toggleListening = async () => {
     if (listening) {
       SpeechRecognition.stopListening()
     } else {
       resetTranscript()
-      SpeechRecognition.startListening({ continuous: true })
+      try {
+        await SpeechRecognition.startListening({ continuous: true })
+      } catch (error) {
+        console.error('Speech recognition failed:', error)
+      }
     }
   }
 
