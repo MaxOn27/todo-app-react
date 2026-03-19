@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { Reorder, useDragControls } from 'framer-motion'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
@@ -7,15 +7,10 @@ import { DeleteDialog } from './DeleteDialog'
 import { PencilIcon, CheckIcon, XIcon, GripVerticalIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const LONG_PRESS_DELAY = 300
-
 export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
   const [isEditing, setIsEditing] = useState(false)
   const [editText, setEditText] = useState(todo.text)
-  const [isDragReady, setIsDragReady] = useState(false)
   const dragControls = useDragControls()
-  const longPressTimer = useRef(null)
-  const dragStarted = useRef(false)
 
   const handleSave = () => {
     if (editText.trim()) {
@@ -37,72 +32,33 @@ export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
     }
   }
 
-  const handlePointerDown = (e) => {
-    // Only apply delay for touch - mouse can drag immediately
-    if (e.pointerType === 'touch') {
-      longPressTimer.current = setTimeout(() => {
-        setIsDragReady(true)
-        // Don't call dragControls.start() here - event is stale after 300ms
-        // Wait for fresh pointerMove event instead
-      }, LONG_PRESS_DELAY)
-    } else {
-      dragControls.start(e)
-    }
-  }
-
-  const handlePointerUp = () => {
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current)
-      longPressTimer.current = null
-    }
-    setIsDragReady(false)
-    dragStarted.current = false
-  }
-
-  const handlePointerMove = (e) => {
-    if (longPressTimer.current && e.pointerType === 'touch') {
-      // Finger moved BEFORE long press completed - user is scrolling
-      clearTimeout(longPressTimer.current)
-      longPressTimer.current = null
-    } else if (isDragReady && e.pointerType === 'touch' && !dragStarted.current) {
-      // Long press completed, start drag with this FRESH event (only once!)
-      dragStarted.current = true
-      dragControls.start(e)
-    }
-  }
-
   return (
     <Reorder.Item
       value={todo}
       dragListener={false}
       dragControls={dragControls}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerUp}
-      onPointerMove={handlePointerMove}
       whileDrag={{
         scale: 1.02,
         boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
         cursor: 'grabbing'
       }}
-      className={cn(
-        "group flex cursor-grab select-none items-center gap-3 rounded-lg border border-border bg-card p-3 transition-colors hover:bg-muted/50 active:cursor-grabbing",
-        isDragReady && "touch-none"
-      )}
+      className="group flex cursor-grab select-none items-center gap-3 rounded-lg border border-border bg-card p-3 transition-colors hover:bg-muted/50 active:cursor-grabbing"
     >
-      <div className="text-muted-foreground opacity-50">
+      <div
+        onPointerDown={(e) => dragControls.start(e)}
+        className="cursor-grab touch-none text-muted-foreground opacity-50 transition-opacity hover:opacity-100 active:cursor-grabbing"
+      >
         <GripVerticalIcon className="size-5 sm:size-4" />
       </div>
 
       <Checkbox
         checked={todo.completed}
         onCheckedChange={() => onToggle(todo.id)}
-        onPointerDown={(e) => e.stopPropagation()}
         className="shrink-0"
       />
 
       {isEditing ? (
-        <div className="flex flex-1 items-center gap-2" onPointerDown={(e) => e.stopPropagation()}>
+        <div className="flex flex-1 items-center gap-2">
           <Input
             type="text"
             value={editText}
@@ -129,7 +85,7 @@ export function TodoItem({ todo, onUpdate, onDelete, onToggle }) {
           >
             {todo.text}
           </span>
-          <div className="flex items-center gap-1 opacity-100 sm:opacity-0 transition-opacity sm:group-hover:opacity-100" onPointerDown={(e) => e.stopPropagation()}>
+          <div className="flex items-center gap-1 opacity-100 sm:opacity-0 transition-opacity sm:group-hover:opacity-100">
             <Button
               variant="ghost"
               size="icon-sm"
