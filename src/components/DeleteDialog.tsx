@@ -8,11 +8,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
-import { Trash2Icon } from 'lucide-react'
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { Trash2Icon } from 'lucide-react';
 
-export function DeleteDialog({ onConfirm }) {
+interface DeleteDialogProps {
+  onConfirm: () => void;
+}
+
+export function DeleteDialog({ onConfirm }: DeleteDialogProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger>
@@ -38,5 +42,5 @@ export function DeleteDialog({ onConfirm }) {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }

@@ -1,8 +1,17 @@
-import { Reorder, motion } from 'framer-motion'
-import { TodoItem } from './TodoItem'
-import { ListTodoIcon } from 'lucide-react'
+import { Reorder, motion } from 'framer-motion';
+import { TodoItem } from './TodoItem';
+import { ListTodoIcon } from 'lucide-react';
+import type { Todo } from '@/types/todo';
 
-export function TodoList({ todos, onUpdate, onDelete, onToggle, onReorder }) {
+interface TodoListProps {
+  todos: Todo[];
+  onUpdate: (id: string, text: string) => void;
+  onDelete: (id: string) => void;
+  onToggle: (id: string) => void;
+  onReorder: (newOrder: Todo[]) => void;
+}
+
+export function TodoList({ todos, onUpdate, onDelete, onToggle, onReorder }: TodoListProps) {
   if (todos.length === 0) {
     return (
       <motion.div
@@ -13,7 +22,7 @@ export function TodoList({ todos, onUpdate, onDelete, onToggle, onReorder }) {
         <ListTodoIcon className="size-12 opacity-50" />
         <p className="text-sm">No todos yet. Add one above!</p>
       </motion.div>
-    )
+    );
   }
 
   return (
@@ -33,5 +42,5 @@ export function TodoList({ todos, onUpdate, onDelete, onToggle, onReorder }) {
         />
       ))}
     </Reorder.Group>
-  )
+  );
 }

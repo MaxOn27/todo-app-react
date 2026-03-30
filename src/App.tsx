@@ -1,28 +1,16 @@
-import { useEffect, useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { TodoForm } from '@/components/TodoForm'
-import { TodoList } from '@/components/TodoList'
-import { useTodos } from '@/hooks/useTodos'
-import { SunIcon, MoonIcon, CheckSquareIcon } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { TodoForm } from '@/components/TodoForm';
+import { TodoList } from '@/components/TodoList';
+import { useTodos } from '@/hooks/useTodos';
+import { useTheme } from '@/hooks/useTheme';
+import { SunIcon, MoonIcon, CheckSquareIcon } from 'lucide-react';
 
 function App() {
-  const { todos, addTodo, updateTodo, deleteTodo, toggleTodo, reorderTodos } = useTodos()
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('theme')
-      if (stored) return stored === 'dark'
-      return window.matchMedia('(prefers-color-scheme: dark)').matches
-    }
-    return true
-  })
+  const { todos, addTodo, updateTodo, deleteTodo, toggleTodo, reorderTodos } = useTodos();
+  const { isDark, toggleTheme } = useTheme();
 
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark)
-    localStorage.setItem('theme', isDark ? 'dark' : 'light')
-  }, [isDark])
-
-  const completedCount = todos.filter(t => t.completed).length
+  const completedCount = todos.filter(t => t.completed).length;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 px-4 py-8 sm:py-12">
@@ -37,7 +25,7 @@ function App() {
               <Button
                 variant="ghost"
                 size="icon-sm"
-                onClick={() => setIsDark(!isDark)}
+                onClick={toggleTheme}
               >
                 {isDark ? (
                   <SunIcon className="size-4" />
@@ -65,7 +53,7 @@ function App() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
